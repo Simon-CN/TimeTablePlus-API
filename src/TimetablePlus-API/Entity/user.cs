@@ -10,7 +10,7 @@ namespace TimetablePlus_API.Entity
     public class User
     {
         [Column(TypeName = "uint")]
-        public long id { get; set; }
+        public int id { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -27,5 +27,7 @@ namespace TimetablePlus_API.Entity
 
         [StringLength(255)]
         public string background { get; set; }
+
+        public int schoolId { get; set; }
     }
 }

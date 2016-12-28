@@ -29,8 +29,10 @@ namespace TimetablePlus_API.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        [Route("post")]
+        public string Post(string value)
         {
+            return value;
         }
 
         // PUT api/values/5

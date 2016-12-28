@@ -14,7 +14,7 @@ namespace TimetablePlus_API.Entity
         public DbSet<Lesson> lesson { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseMySql(@"Server=127.0.0.1;database=timetable_plus;uid=root;pwd=1234");
+            => optionsBuilder.UseMySql(@"Server=127.0.0.1;database=timetable_plus;uid=root;pwd=1234;charset=UTF8");
 
     }
 }

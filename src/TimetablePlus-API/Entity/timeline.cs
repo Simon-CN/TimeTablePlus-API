@@ -24,5 +24,8 @@ namespace TimetablePlus_API.Entity
 
         [StringLength(3000)]
         public string pictures { get; set; }
+
+        [StringLength(255)]
+        public string location { get; set; }
     }
 }
