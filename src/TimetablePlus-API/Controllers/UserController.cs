@@ -18,14 +18,37 @@ namespace TimetablePlus_API.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
+        private static readonly string PictureUrl = "/uploads/";
         private IHostingEnvironment _environment;
 
-        public HomeController(IHostingEnvironment environment)
+        public UserController(IHostingEnvironment environment)
         {
             _environment = environment;
         }
 
         private DataContext context = new DataContext();
+
+
+
+        [HttpPost]
+        [Route("info")]
+        public BaseResponse<Object> GetUserInfo(string token)
+        {
+            BaseResponse<Object> s = new BaseResponse<Object>();
+            try
+            {
+                int uid = TokenUtil.GetUserId(token);
+                var uif = context.user.Select(p => new { id = p.id, name = p.name, desc = p.desc, portrait = p.portrait, background = p.background }).Where(p => p.id == uid).FirstOrDefault();
+                s.setContent(uif);
+            }
+            catch (Exception e)
+            {
+                s.setFailed(e.Message);
+            }
+
+            return s;
+        }
+
         [HttpGet]
         [Route("value")]
         public BaseResponse<string> value()
@@ -39,23 +62,15 @@ namespace TimetablePlus_API.Controllers
 
         [HttpPost]
         [Route("login")]
-        public BaseResponse<UserResponse> Login(string username, string password)
+        public BaseResponse<string> Login(string username, string password)
         {
-            BaseResponse<UserResponse> rsp = new BaseResponse<UserResponse>();
+            BaseResponse<string> rsp = new BaseResponse<string>();
             try
             {
                 var uif = context.user.Where(p => p.name.Equals(username) && p.password.Equals(password)).ToList()[0];
                 if (uif != null)
                 {
-                    UserResponse ur = new UserResponse();
-                    ur.id = uif.id;
-                    ur.name = uif.name;
-                    ur.protrait = string.IsNullOrEmpty(uif.portrait) ? null : uif.portrait;
-                    ur.schoolId = uif.schoolId;
-                    ur.description = uif.desc;
-                    ur.background = string.IsNullOrEmpty(uif.background) ? null : uif.background;
-                    ur.token = TokenUtil.CreateToken(ur.id);
-                    rsp.setContent(ur);
+                    rsp.setContent(TokenUtil.CreateToken(uif.id));
                 }
             }
             catch (Exception e)
@@ -135,21 +150,30 @@ namespace TimetablePlus_API.Controllers
 
         [HttpPost]
         [Route("portrait")]
-        public BaseResponse<string> UploadPortrait(IFormFile file)
+        public BaseResponse<string> UploadPortrait(IFormFile file, string token)
         {
             BaseResponse<string> rsp = new BaseResponse<string>();
             try
             {
+                var ui = context.user.Where(p => p.id == TokenUtil.GetUserId(token)).FirstOrDefault();
                 string path = null;
+                string fileName = null;
+                if (string.IsNullOrWhiteSpace(_environment.WebRootPath))
+                {
+                    _environment.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                }
                 var uploads = Path.Combine(_environment.WebRootPath, "uploads");
                 if (uploads != null)
                 {
-                    path = Path.Combine(uploads, file.FileName);
+                    fileName = ui.id + "portrait" + file.FileName;
+                    path = Path.Combine(uploads, fileName);
                     using (var fileStream = new FileStream(path, FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
                 }
+                ui.portrait = PictureUrl + fileName;
+                context.SaveChanges();
                 rsp.setContent(path);
             }
             catch (Exception e)
@@ -158,6 +182,43 @@ namespace TimetablePlus_API.Controllers
             }
             return rsp;
         }
+
+        [HttpPost]
+        [Route("background")]
+        public BaseResponse<string> UploadBackground(IFormFile file, string token)
+        {
+            BaseResponse<string> rsp = new BaseResponse<string>();
+            try
+            {
+                var ui = context.user.Where(p => p.id == TokenUtil.GetUserId(token)).FirstOrDefault();
+                string path = null;
+                string fileName = null;
+                if (string.IsNullOrWhiteSpace(_environment.WebRootPath))
+                {
+                    _environment.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                }
+                var uploads = Path.Combine(_environment.WebRootPath, "uploads");
+                if (uploads != null)
+                {
+                    fileName = ui.id + "background" + file.FileName;
+                    path = Path.Combine(uploads, fileName);
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+                    }
+                }
+                ui.background = PictureUrl + fileName;
+                context.SaveChanges();
+                rsp.setContent(path);
+            }
+            catch (Exception e)
+            {
+                rsp.setFailed(e.Message);
+            }
+            return rsp;
+
+        }
+
 
     }
 }

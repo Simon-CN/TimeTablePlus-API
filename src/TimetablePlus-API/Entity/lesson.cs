@@ -10,7 +10,7 @@ namespace TimetablePlus_API.Entity
     public class Lesson
     {
         [Column(TypeName = "uint")]
-        public long id { get; set; }
+        public int id { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -22,16 +22,15 @@ namespace TimetablePlus_API.Entity
         [StringLength(255)]
         public string teacher { get; set; }
 
-        public int? dayofweek { get; set; }
+        public int dayofweek { get; set; }
 
-        public int? startTime { get; set; }
+        public int startTime { get; set; }
 
-        public int? endTime { get; set; }
+        public int endTime { get; set; }
 
-        public int? startWeek { get; set; }
+        public int startWeek { get; set; }
 
-        public int? endWeek { get; set; }
+        public int endWeek { get; set; }
 
-        public int? term { get; set; }
     }
 }

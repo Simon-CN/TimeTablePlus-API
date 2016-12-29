@@ -28,6 +28,5 @@ namespace TimetablePlus_API.Entity
         [StringLength(255)]
         public string background { get; set; }
 
-        public int schoolId { get; set; }
     }
 }

@@ -12,7 +12,5 @@ namespace TimetablePlus_API.Response
         public string description { get; set; }
         public string protrait { get; set; }
         public string background { get; set; }
-        public int schoolId { get; set; }
-        public string token { get; set; }
     }
 }

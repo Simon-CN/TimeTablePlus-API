@@ -10,13 +10,13 @@ namespace TimetablePlus_API.Entity
     public class Timeline
     {
         [Column(TypeName = "uint")]
-        public long id { get; set; }
+        public int id { get; set; }
 
         [Required]
         [StringLength(255)]
         public string content { get; set; }
 
-        public DateTime? createTime { get; set; }
+        public DateTime createTime { get; set; }
 
         public int lessonId { get; set; }
 
