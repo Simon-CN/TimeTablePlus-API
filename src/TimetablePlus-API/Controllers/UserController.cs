@@ -28,8 +28,6 @@ namespace TimetablePlus_API.Controllers
 
         private DataContext context = new DataContext();
 
-
-
         [HttpPost]
         [Route("info")]
         public BaseResponse<Object> GetUserInfo(string token)
@@ -46,17 +44,6 @@ namespace TimetablePlus_API.Controllers
                 s.setFailed(e.Message);
             }
 
-            return s;
-        }
-
-        [HttpGet]
-        [Route("value")]
-        public BaseResponse<string> value()
-        {
-            BaseResponse<string> s = new BaseResponse<string>();
-
-            s.setContent(context.user.Select(p => p.name).ToList()[0]);
-            s.setSuccess();
             return s;
         }
 
