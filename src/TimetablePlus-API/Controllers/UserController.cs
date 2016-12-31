@@ -63,7 +63,7 @@ namespace TimetablePlus_API.Controllers
             catch (Exception e)
             {
                 rsp.setContent(null);
-                rsp.setFailed(e.Message);
+                rsp.setFailed("用户名或密码错误");
             }
 
             return rsp;
@@ -76,11 +76,18 @@ namespace TimetablePlus_API.Controllers
             BaseResponse<Object> rsp = new BaseResponse<object>();
             try
             {
-                User u = new User();
-                u.name = username;
-                u.password = password;
-                context.user.Add(u);
-                context.SaveChanges();
+                if (context.user.Where(p => p.name == username).FirstOrDefault() != null)
+                {
+                    rsp.setFailed("用户名已存在");
+                }
+                else
+                {
+                    User u = new User();
+                    u.name = username;
+                    u.password = password;
+                    context.user.Add(u);
+                    context.SaveChanges();
+                }
             }
             catch (Exception e)
             {

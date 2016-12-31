@@ -18,7 +18,7 @@ namespace TimetablePlus_API.Controllers
     public class TimelineController : Controller
     {
         DataContext mContext = new DataContext();
-        private static readonly string PicutreUrl = "/uploads/";
+        private static readonly string PicutreUrl = "http://10.205.27.210:8080/uploads/";
 
         private IHostingEnvironment _environment;
 
@@ -99,7 +99,7 @@ namespace TimetablePlus_API.Controllers
 
         [HttpPost]
         [Route("create")]
-        public BaseResponse<Object> CreateTimeline(List<IFormFile> files, string token, int lesson_id, string location, string content)
+        public BaseResponse<Object> CreateTimeline(ICollection<IFormFile> files, string token, int lesson_id, string location, string content)
         {
             BaseResponse<Object> rsp = new BaseResponse<object>();
             int uid = TokenUtil.GetUserId(token);
@@ -120,13 +120,16 @@ namespace TimetablePlus_API.Controllers
                     List<string> pictures = new List<string>();
                     foreach (IFormFile file in files)
                     {
-                        string fileName = uid + "timeline" + file.FileName;
-                        string path = Path.Combine(uploads, fileName);
-                        using (var fileStream = new FileStream(path, FileMode.Create))
+                        if (file != null)
                         {
-                            file.CopyTo(fileStream);
+                            string fileName = uid + "timeline" + file.FileName;
+                            string path = Path.Combine(uploads, fileName);
+                            using (var fileStream = new FileStream(path, FileMode.Create))
+                            {
+                                file.CopyTo(fileStream);
+                            }
+                            pictures.Add(PicutreUrl + fileName);
                         }
-                        pictures.Add(PicutreUrl + fileName);
                     }
                     tl.pictures = ConvertPictureList(pictures);
                 }
@@ -153,7 +156,7 @@ namespace TimetablePlus_API.Controllers
                 }
                 else
                 {
-                    s += "," + ls[i];
+                    s +=( "," + ls[i]);
                 }
             }
             return s;
