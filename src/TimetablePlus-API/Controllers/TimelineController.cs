@@ -99,7 +99,7 @@ namespace TimetablePlus_API.Controllers
 
         [HttpPost]
         [Route("create")]
-        public BaseResponse<Object> CreateTimeline(ICollection<IFormFile> files, string token, int lesson_id, string location, string content)
+        public BaseResponse<Object> CreateTimeline(IFormFile[] files, string token, int lesson_id, string location, string content)
         {
             BaseResponse<Object> rsp = new BaseResponse<object>();
             int uid = TokenUtil.GetUserId(token);
@@ -110,7 +110,7 @@ namespace TimetablePlus_API.Controllers
             tl.location = location;
             try
             {
-                if (files != null && files.Count > 0)
+                if (files != null && files.Length > 0)
                 {
                     if (string.IsNullOrWhiteSpace(_environment.WebRootPath))
                     {

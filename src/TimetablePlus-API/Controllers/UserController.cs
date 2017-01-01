@@ -18,7 +18,8 @@ namespace TimetablePlus_API.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        private static readonly string PictureUrl = "/uploads/";
+        private static readonly string PictureUrl = "http://10.205.27.210:8080/uploads/";
+
         private IHostingEnvironment _environment;
 
         public UserController(IHostingEnvironment environment)
@@ -36,7 +37,7 @@ namespace TimetablePlus_API.Controllers
             try
             {
                 int uid = TokenUtil.GetUserId(token);
-                var uif = context.user.Select(p => new { id = p.id, name = p.name, desc = p.desc, portrait = p.portrait, background = p.background }).Where(p => p.id == uid).FirstOrDefault();
+                var uif = context.user.Where(p => p.id == uid).Select(p => new { screenName = p.name, desc = p.desc, portrait = p.portrait, background = p.background }).FirstOrDefault();
                 s.setContent(uif);
             }
             catch (Exception e)
@@ -99,18 +100,22 @@ namespace TimetablePlus_API.Controllers
 
         [HttpPost]
         [Route("editPassword")]
-        public BaseResponse<Object> EditPassword(string password, string token)
+        public BaseResponse<Object> EditPassword(string password, string oldpassword, string token)
         {
             BaseResponse<Object> rsp = new BaseResponse<object>();
             try
             {
                 int uid = TokenUtil.GetUserId(token);
-                var uif = context.user.Where(p => p.id == uid).FirstOrDefault();
-                if (uif != null)
+                var uif = context.user.Where(p => p.id == uid && p.password == oldpassword).FirstOrDefault();
+                if (uif == null)
+                {
+                    rsp.setFailed("密码错误");
+                }
+                else
                 {
                     uif.password = password;
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
             }
             catch (Exception e)
             {
@@ -212,7 +217,6 @@ namespace TimetablePlus_API.Controllers
             return rsp;
 
         }
-
 
     }
 }

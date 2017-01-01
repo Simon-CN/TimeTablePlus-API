@@ -19,7 +19,7 @@ namespace TimetablePlus_API.Response
 
         public string userName { get; set; }
 
-        public string userPortrait { get; set; }
+        public string portrait { get; set; }
 
         public string pictures { get; set; }
 
@@ -41,7 +41,7 @@ namespace TimetablePlus_API.Response
                 if (userInfo != null)
                 {
                     userName = userInfo.name;
-                    userPortrait = userInfo.portrait;
+                    portrait = userInfo.portrait;
                 }
                 else
                 {
